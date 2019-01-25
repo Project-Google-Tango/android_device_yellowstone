@@ -53,11 +53,12 @@ on init
     chown system system /sys/devices/virtual/misc/touch/slowscan_enable
 
     start watchdogd
+
 on post-fs-data
     chmod 0644 /persist/wifi_mac.txt root root
-    symlink /system/vendor/firmware/bcm43341/fw_bcmdhd.bin /data/misc/wifi/firmware/fw_bcmdhd.bin
-    symlink /system/vendor/firmware/bcm43341/fw_bcmdhd_a0.bin /data/misc/wifi/firmware/fw_bcmdhd_a0.bin
-    symlink /system/etc/nvram_43341_rev4.txt /data/misc/wifi/firmware/nvram.txt
+    /system/bin/ln -s /system/vendor/firmware/bcm43341/fw_bcmdhd.bin /data/misc/wifi/firmware/fw_bcmdhd.bin
+    /system/bin/ln -s /system/vendor/firmware/bcm43341/fw_bcmdhd_a0.bin /data/misc/wifi/firmware/fw_bcmdhd_a0.bin
+    /system/bin/ln -s /system/etc/nvram_43341_rev4.txt /data/misc/wifi/firmware/nvram.txt
     insmod /system/lib/modules/bcmdhd.ko
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     mkdir /data/nvcam 0700 media camera
