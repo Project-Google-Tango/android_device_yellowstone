@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-# Copyright (c) 2013-2014, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) 2013, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
 # and proprietary rights in and to this software, related documentation
@@ -101,7 +101,6 @@ if [ "$PIXEL_COUNT" -le "1000000" ]; then
     property_set_if_none "ro.hwui.gradient_cache_size" "0.5"
     property_set_if_none "ro.hwui.path_cache_size" "8.0"
     property_set_if_none "ro.hwui.shape_cache_size" "1.0"
-    property_set_if_none "ro.hwui.r_buffer_cache_size" "4.0"
     property_set_if_none "ro.hwui.drop_shadow_cache_size" "2.0"
     property_set_if_none "ro.hwui.text_small_cache_width" "1024"
     property_set_if_none "ro.hwui.text_small_cache_height" "256"
@@ -113,7 +112,6 @@ elif [ "$PIXEL_COUNT" -le "3000000" ]; then
     property_set_if_none "ro.hwui.gradient_cache_size" "0.8"
     property_set_if_none "ro.hwui.path_cache_size" "24.0"
     property_set_if_none "ro.hwui.shape_cache_size" "3.0"
-    property_set_if_none "ro.hwui.r_buffer_cache_size" "10.0"
     property_set_if_none "ro.hwui.drop_shadow_cache_size" "4.0"
     property_set_if_none "ro.hwui.text_small_cache_width" "1024"
     property_set_if_none "ro.hwui.text_small_cache_height" "512"
@@ -125,7 +123,6 @@ elif [ "$PIXEL_COUNT" -le "5000000" ]; then
     property_set_if_none "ro.hwui.gradient_cache_size" "1.0"
     property_set_if_none "ro.hwui.path_cache_size" "40.0"
     property_set_if_none "ro.hwui.shape_cache_size" "5.0"
-    property_set_if_none "ro.hwui.r_buffer_cache_size" "34.0"
     property_set_if_none "ro.hwui.drop_shadow_cache_size" "6.0"
     property_set_if_none "ro.hwui.text_small_cache_width" "1024"
     property_set_if_none "ro.hwui.text_small_cache_height" "1024"
@@ -137,7 +134,6 @@ else
     property_set_if_none "ro.hwui.gradient_cache_size" "1.2"
     property_set_if_none "ro.hwui.path_cache_size" "60.0"
     property_set_if_none "ro.hwui.shape_cache_size" "6.0"
-    property_set_if_none "ro.hwui.r_buffer_cache_size" "34.0"
     property_set_if_none "ro.hwui.drop_shadow_cache_size" "8.0"
     property_set_if_none "ro.hwui.text_small_cache_width" "1024"
     property_set_if_none "ro.hwui.text_small_cache_height" "1024"

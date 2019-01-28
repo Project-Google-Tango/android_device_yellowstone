@@ -38,6 +38,8 @@ TARGET_BOOTLOADER_BOARD_NAME := ardbeg
 TARGET_KERNEL_DT_NAME := tegra124-ardbeg
 
 # Kernel cmdline
+TARGET_KERNEL_SOURCE := kernel/google/yellowstone
+TARGET_KERNEL_CONFIG :=  yellowstone_defconfig
 BOARD_KERNEL_CMDLINE := androidboot.hardware=ardbeg androidboot.selinux=permissive androidboot.ccihwid=6
 
 # CPU options
@@ -134,6 +136,17 @@ ART_USE_HSPACE_COMPACT=true
 
 # Include an expanded selection of fonts
 EXTENDED_FONT_FOOTPRINT := true
+
+# SELinux
+#BOARD_SEPOLICY_DIRS += device/google/yellowstone/sepolicy
+#BOARD_SEPOLICY_UNION += \
+#        device.te \
+#	dhcp.te \
+#	file.te \
+#	gpsd.te \
+#	rild.te \
+#        file_contexts \
+#        property_contexts
 
 # Inherit from the proprietary version
 include vendor/google/yellowstone/BoardConfigVendor.mk

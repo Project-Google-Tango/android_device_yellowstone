@@ -276,10 +276,10 @@
     <pcm_config rate="48000"
             channels="2"
             bps="16"
-            period_size="1024"
+            period_size="128"
             period_count="4"
-            start_threshold="4095"
-            stop_threshold="4096"
+            start_threshold="511"
+            stop_threshold="512"
             silence_threshold="0"
             avail_min="1"/>
     <param name="ulp" val="1"/>
@@ -296,6 +296,8 @@
       <ctl name="Int Spk Switch" val="0"/>
       <ctl name="Int Mic Switch" val="0"/>
       <ctl name="Mic Jack Switch" val="0"/>
+      <ctl name="DAI select" val="1:1|2:1|3:3"/>
+      <ctl name="SDI select" val="IF2"/>
     </path>
 
     <playback>
@@ -311,7 +313,7 @@
       <device name="speaker">
         <path name="on">
           <ctl name="Int Spk Switch" val="1"/>
-          <ctl name="Speaker Playback Volume" val="0x19"/>
+          <ctl name="Speaker Playback Volume" val="0x1f"/>
 		  <ctl name="DAC IF1 Data Switch" val="Swap" />
         </path>
         <path name="off">
@@ -336,17 +338,19 @@
 
       <device name="builtin-mic">
         <path name="on">
-          <ctl name="Stereo ADC2 Mux" val="DMIC1"/>
-          <ctl name="Stereo ADC MIXL ADC1 Switch" val="0"/>
-          <ctl name="Stereo ADC MIXR ADC1 Switch" val="0"/>
-          <ctl name="Stereo ADC MIXL ADC2 Switch" val="1"/>
-          <ctl name="Stereo ADC MIXR ADC2 Switch" val="1"/>
-          <ctl name="DMIC Switch" val="DMIC1"/>
+          <ctl name="Mono ADC L2 Mux" val="DMIC L1"/>
+	  <ctl name="Mono ADC R2 Mux" val="DMIC R1"/>
+          <ctl name="Mono ADC MIXL ADC1 Switch" val="0"/>
+          <ctl name="Mono ADC MIXR ADC1 Switch" val="0"/>
+          <ctl name="Mono ADC MIXL ADC2 Switch" val="1"/>
+          <ctl name="Mono ADC MIXR ADC2 Switch" val="1"/>
           <ctl name="Int Mic Switch" val="1"/>
+          <ctl name="IF2 ADC L Mux" val="TxDP"/>
+          <ctl name="IF2 ADC R Mux" val="TxDP"/>
         </path>
         <path name="off">
-          <ctl name="Stereo ADC MIXL ADC2 Switch" val="0"/>
-          <ctl name="Stereo ADC MIXR ADC2 Switch" val="0"/>
+          <ctl name="Mono ADC MIXL ADC2 Switch" val="0"/>
+          <ctl name="Mono ADC MIXR ADC2 Switch" val="0"/>
           <ctl name="Int Mic Switch" val="0"/>
         </path>
       </device>
@@ -357,20 +361,23 @@
           <ctl name="RECMIXR BST1 Switch" val="0"/>
           <ctl name="RECMIXL BST2 Switch" val="1"/>
           <ctl name="RECMIXR BST2 Switch" val="1"/>
-          <ctl name="Stereo ADC1 Mux" val="ADC"/>
-          <ctl name="Stereo ADC MIXL ADC1 Switch" val="1"/>
-          <ctl name="Stereo ADC MIXR ADC1 Switch" val="1"/>
-          <ctl name="Stereo ADC MIXL ADC2 Switch" val="0"/>
-          <ctl name="Stereo ADC MIXR ADC2 Switch" val="0"/>
+          <ctl name="Mono ADC L1 Mux" val="ADCL"/>
+	  <ctl name="Mono ADC R1 Mux" val="ADCR"/>
+          <ctl name="Mono ADC MIXL ADC1 Switch" val="1"/>
+          <ctl name="Mono ADC MIXR ADC1 Switch" val="1"/>
+          <ctl name="Mono ADC MIXL ADC2 Switch" val="0"/>
+          <ctl name="Mono ADC MIXR ADC2 Switch" val="0"/>
           <ctl name="IN1 Mode Control" val="Differential"/>
           <ctl name="IN2 Mode Control" val="Differential"/>
           <ctl name="Mic Jack Switch" val="1"/>
+          <ctl name="IF2 ADC L Mux" val="Mono ADC MIXL"/>
+          <ctl name="IF2 ADC R Mux" val="Mono ADC MIXR"/>
         </path>
         <path name="off">
           <ctl name="RECMIXL BST2 Switch" val="0"/>
           <ctl name="RECMIXR BST2 Switch" val="0"/>
-          <ctl name="Stereo ADC MIXL ADC1 Switch" val="0"/>
-          <ctl name="Stereo ADC MIXR ADC1 Switch" val="0"/>
+          <ctl name="Mono ADC MIXL ADC1 Switch" val="0"/>
+          <ctl name="Mono ADC MIXR ADC1 Switch" val="0"/>
           <ctl name="Mic Jack Switch" val="0"/>
         </path>
       </device>
@@ -384,10 +391,10 @@
     <pcm_config rate="8000"
                 channels="1"
                 bps="16"
-                period_size="256"
+                period_size="128"
                 period_count="4"
-                start_threshold="1023"
-                stop_threshold="1024"
+                start_threshold="511"
+                stop_threshold="512"
                 silence_threshold="0"
                 avail_min="1"/>
     <playback>
@@ -404,7 +411,7 @@
                card_id="-1"
                card_name="tegrart5639"
                device_id="3">
-    <pcm_config rate="16000"
+    <pcm_config rate="48000"
             channels="2"
             bps="16"
             period_size="1024"
