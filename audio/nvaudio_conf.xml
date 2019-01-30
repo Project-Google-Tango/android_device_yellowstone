@@ -55,7 +55,7 @@
 <AudioConfigs>
   <alsa_device name="music"
                card_id="-1"
-               card_name="tegrart5645"
+               card_name="tegrart5639"
                device_id="0">
     <pcm_config rate="48000"
             channels="2"
@@ -152,7 +152,7 @@
 
   <alsa_device name="voice"
                card_id="-1"
-               card_name="tegrart5645"
+               card_name="tegrart5639"
                device_id="2">
     <pcm_config rate="8000"
                 channels="1"
@@ -175,7 +175,7 @@
 
   <alsa_device name="voice-call"
                card_id="-1"
-               card_name="tegrart5645"
+               card_name="tegrart5639"
                device_id="3">
     <pcm_config rate="48000"
                 channels="2"
