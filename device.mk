@@ -103,9 +103,6 @@ PRODUCT_PACKAGES += \
     init.ardbeg.rc \
     init.comms.rc \
     init.hdcp.rc \
-    init.icera.common.rc \
-    init.icera.rc \
-    init.icera.tablet.rc \
     init.nv_dev_board.usb.rc \
     init.recovery.nv_dev_board.usb.rc \
     init.t124_emmc.rc \
@@ -166,9 +163,16 @@ PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.usb.default \
     audio.r_submix.default \
+    libaudio-resampler \
+    libaudiospdif \
+    libtinyalsa \
+    libtinycompress \
     tinycap \
     tinymix \
-    tinyplay
+    tinyplay \
+    xaplay \
+    libstagefrighthw \
+    enctune.conf
 
 # Add props used in stock
 PRODUCT_PROPERTY_OVERRIDES += \
