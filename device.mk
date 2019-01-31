@@ -32,9 +32,9 @@ DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
-# Boot Animation
-#PRODUCT_COPY_FILES += \
-#    $(LOCAL_PATH)/bootanimation.zip:system/media/bootanimation.zip
+# LTE APNS
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/apns-conf.xml:system/etc/apns-conf.xml
 
 # Permissions
 PRODUCT_COPY_FILES += \

@@ -14,10 +14,6 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug mode=0755
 
 on init
-
-    export NO_ADDR_COMPAT_LAYOUT_FIXUP 1
-
-    # See storage config details at http://source.android.com/tech/storage/
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage/emulated 0555 root root
     mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
@@ -42,15 +38,10 @@ on init
     symlink /mnt/media_rw/usbdrive /usbdrive
 
     # create directory for mounting calibration partition
-    mkdir /mnt/factory 0775 system system
+    mkdir /mnt/factory 0666 system system
 
     # create directory for mounting user calibration partition
     mkdir /mnt/usercalib 0771 system system
-    # Mount a tmpfs into /mnt/tmp for hosting nvram, phs shared memory
-    mkdir /mnt/tmp 0770 system system
-    mount tmpfs tmpfs /mnt/tmp mode=0775,gid=1003
-
-    chown system system /sys/devices/virtual/misc/touch/slowscan_enable
 
     start watchdogd
 
@@ -293,6 +284,9 @@ service set_sensor_perm /system/bin/set_light_sensor_perm.sh
 on property:ro.debuggable=1
     # EMC debug interface
     chmod 666 /sys/kernel/debug/tegra_emc/eack_state
+
+service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
+    class late_start
 
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
