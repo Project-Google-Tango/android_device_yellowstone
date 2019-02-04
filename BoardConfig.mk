@@ -38,9 +38,10 @@ TARGET_BOOTLOADER_BOARD_NAME := ardbeg
 TARGET_KERNEL_DT_NAME := tegra124-ardbeg
 
 # Kernel cmdline
-TARGET_KERNEL_SOURCE := kernel/google/yellowstone
-TARGET_KERNEL_CONFIG :=  yellowstone_defconfig
-BOARD_KERNEL_CMDLINE := androidboot.hardware=ardbeg androidboot.selinux=permissive androidboot.ccihwid=6
+TARGET_KERNEL_SOURCE := kernel/google/yellow
+TARGET_KERNEL_CONFIG := yellowstone_defconfig
+BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive androidboot.ccihwid=6
+#usbcore.autosuspend=-1
 
 # CPU options
 TARGET_CPU_ABI := armeabi-v7a
@@ -56,7 +57,9 @@ BOARD_USES_POWERHAL := true
 BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_ALSA_AUDIO := true
 
-USE_CUSTOM_AUDIO_POLICY := 1
+
+# Reserved for when audio.primary.tegra works
+# USE_CUSTOM_AUDIO_POLICY := 1
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -92,7 +95,7 @@ BOARD_WIDEVINE_OEMCRYPTO_LEVEL := 1
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USES_MKE2FS := true
-BOARD_BOOTIMAGE_PARTITION_SIZE := 8388608
+BOARD_BOOTIMAGE_PARTITION_SIZE := 8588608
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 1443438592
 BOARD_FLASH_BLOCK_SIZE := 4096

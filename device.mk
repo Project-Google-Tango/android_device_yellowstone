@@ -222,5 +222,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # Call the proprietary setup
 $(call inherit-product, vendor/google/yellowstone/yellowstone-vendor.mk)
+$(call inherit-product, vendor/sierra/qualcomm/sierra-vendor.mk)
 
 
