@@ -40,8 +40,7 @@ TARGET_KERNEL_DT_NAME := tegra124-ardbeg
 # Kernel cmdline
 TARGET_KERNEL_SOURCE := kernel/google/yellow
 TARGET_KERNEL_CONFIG := yellowstone_defconfig
-BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive androidboot.ccihwid=6
-#usbcore.autosuspend=-1
+BOARD_KERNEL_CMDLINE := androidboot.selinux=permissive androidboot.ccihwid=6 usbcore.autosuspend=-1
 
 # CPU options
 TARGET_CPU_ABI := armeabi-v7a

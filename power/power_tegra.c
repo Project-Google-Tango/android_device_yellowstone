@@ -25,7 +25,7 @@
 #include <stdbool.h>
 //#define LOG_NDEBUG 0
 
-#define LOG_TAG "JetsonPowerHAL"
+#define LOG_TAG "TegraPowerHAL"
 #include <utils/Log.h>
 
 #include <hardware/hardware.h>
@@ -39,7 +39,7 @@
 #define NORMAL_MAX_FREQ     "2320500"
 #define GPU_FREQ_CONSTRAINT "852000 852000 -1 2000"
 
-struct jetson_power_module {
+struct tegra_power_module {
     struct power_module base;
     pthread_mutex_t lock;
     int boostpulse_fd;
@@ -101,22 +101,22 @@ static void power_set_interactive(struct power_module __unused *module, int on)
     ALOGV("power_set_interactive: %d done\n", on);
 }
 
-static int boostpulse_open(struct jetson_power_module *jetson)
+static int boostpulse_open(struct tegra_power_module *tegra)
 {
     char buf[80];
     int len;
     static int gpu_boost_fd = -1;
 
-    pthread_mutex_lock(&jetson->lock);
+    pthread_mutex_lock(&tegra->lock);
 
-    if (jetson->boostpulse_fd < 0) {
-        jetson->boostpulse_fd = open(BOOSTPULSE_PATH, O_WRONLY);
+    if (tegra->boostpulse_fd < 0) {
+        tegra->boostpulse_fd = open(BOOSTPULSE_PATH, O_WRONLY);
 
-        if (jetson->boostpulse_fd < 0) {
-            if (!jetson->boostpulse_warned) {
+        if (tegra->boostpulse_fd < 0) {
+            if (!tegra->boostpulse_warned) {
                 strerror_r(errno, buf, sizeof(buf));
                 ALOGE("Error opening %s: %s\n", BOOSTPULSE_PATH, buf);
-                jetson->boostpulse_warned = 1;
+                tegra->boostpulse_warned = 1;
             }
         }
     }
@@ -137,22 +137,22 @@ static int boostpulse_open(struct jetson_power_module *jetson)
         }
     }
 
-    pthread_mutex_unlock(&jetson->lock);
-    return jetson->boostpulse_fd;
+    pthread_mutex_unlock(&tegra->lock);
+    return tegra->boostpulse_fd;
 }
 
-static void jetson_power_hint(struct power_module *module, power_hint_t hint,
+static void tegra_power_hint(struct power_module *module, power_hint_t hint,
                                 void *data)
 {
-    struct jetson_power_module *jetson =
-            (struct jetson_power_module *) module;
+    struct tegra_power_module *tegra =
+            (struct tegra_power_module *) module;
     char buf[80];
     int len;
 
     switch (hint) {
      case POWER_HINT_INTERACTION:
-        if (boostpulse_open(jetson) >= 0) {
-            len = write(jetson->boostpulse_fd, "1", 1);
+        if (boostpulse_open(tegra) >= 0) {
+            len = write(tegra->boostpulse_fd, "1", 1);
 
             if (len < 0) {
                 strerror_r(errno, buf, sizeof(buf));
@@ -166,14 +166,14 @@ static void jetson_power_hint(struct power_module *module, power_hint_t hint,
         break;
 
     case POWER_HINT_LOW_POWER:
-        pthread_mutex_lock(&jetson->lock);
+        pthread_mutex_lock(&tegra->lock);
         if (data) {
             sysfs_write(CPU_MAX_FREQ_PATH, LOW_POWER_MAX_FREQ);
         } else {
             sysfs_write(CPU_MAX_FREQ_PATH, NORMAL_MAX_FREQ);
         }
         low_power_mode = data;
-        pthread_mutex_unlock(&jetson->lock);
+        pthread_mutex_unlock(&tegra->lock);
         break;
 
     default:
@@ -185,21 +185,21 @@ static struct hw_module_methods_t power_module_methods = {
     .open = NULL,
 };
 
-struct jetson_power_module HAL_MODULE_INFO_SYM = {
+struct tegra_power_module HAL_MODULE_INFO_SYM = {
     base: {
         common: {
             tag: HARDWARE_MODULE_TAG,
             module_api_version: POWER_MODULE_API_VERSION_0_2,
             hal_api_version: HARDWARE_HAL_API_VERSION,
             id: POWER_HARDWARE_MODULE_ID,
-            name: "Jetson Power HAL",
+            name: "Tegra Power HAL",
             author: "The Android Open Source Project",
             methods: &power_module_methods,
         },
 
         init: power_init,
         setInteractive: power_set_interactive,
-        powerHint: jetson_power_hint,
+        powerHint: tegra_power_hint,
     },
 
     lock: PTHREAD_MUTEX_INITIALIZER,

@@ -21,7 +21,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_SHARED_LIBRARIES := liblog libcutils
-LOCAL_SRC_FILES := power_jetson.c
-LOCAL_MODULE := power.jetson
+LOCAL_SRC_FILES := power_tegra.c
+LOCAL_MODULE := power.tegra
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_SHARED_LIBRARY)
