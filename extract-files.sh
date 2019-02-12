@@ -1,59 +1,64 @@
 #!/bin/bash
-
-export VENDOR=nvidia
-export DEVICE_VENDOR=nvidia
-export DEVICE=jetson
-
-# Check to see if the user passed a folder in to extract from rather than adb pull
-if [ $# -eq 1 ]; then
-    COPY_FROM=$1
-    test ! -d "$COPY_FROM" && echo error reading dir "$COPY_FROM" && exit 1
-fi
+#
+# Copyright (C) 2016 The CyanogenMod Project
+# Copyright (C) 2017-2018 The LineageOS Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
 set -e
 
-function extract() {
-    for FILE in `egrep -v '(^#|^$)' $1`; do
-        echo "Extracting /system/$FILE ..."
-        OLDIFS=$IFS IFS=":" PARSING_ARRAY=($FILE) IFS=$OLDIFS
-        FILE=`echo ${PARSING_ARRAY[0]} | sed -e "s/^-//g"`
-        DEST=${PARSING_ARRAY[1]}
-        if [ -z $DEST ]; then
-            DEST=$FILE
-        fi
-        DIR=`dirname $FILE`
-        if [ ! -d $2/$DIR ]; then
-            mkdir -p $2/$DIR
-        fi
-        if [ "$COPY_FROM" = "" ]; then
-            # Try destination target first
-            if [ -f /system/$DEST ]; then
-                adb pull /system/$DEST $2/$DEST
-            else
-                # if file does not exist try OEM target
-                if [ "$?" != "0" ]; then
-                    adb pull /system/$FILE $2/$DEST
-                fi
-            fi
-        else
-            # Try destination target first
-            if [ -f $COPY_FROM/$DEST ]; then
-                cp $COPY_FROM/$DEST $2/$DEST
-            else
-                # if file does not exist try OEM target
-                if [ "$?" != "0" ]; then
-                    cp $COPY_FROM/$FILE $2/$DEST
-                fi
-            fi
-        fi
-    done
-}
+DEVICE=yellowstone
+VENDOR=google
 
-DEVICE_BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
-rm -rf $DEVICE_BASE/*
+# Load extract_utils and do some sanity checks
+MY_DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 
-# Extract the device specific files
-extract ../../$DEVICE_VENDOR/$DEVICE/proprietary-files.txt $DEVICE_BASE
+CM_ROOT="$MY_DIR"/../../..
 
-./setup-makefiles.sh
+HELPER="$CM_ROOT"/vendor/cm/build/tools/extract_utils.sh
+if [ ! -f "$HELPER" ]; then
+    echo "Unable to find helper script at $HELPER"
+    exit 1
+fi
+. "$HELPER"
 
+# Default to sanitizing the vendor folder before extraction
+CLEAN_VENDOR=true
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -n | --no-cleanup )     CLEAN_VENDOR=false
+                                ;;
+        -s | --section )        shift
+                                SECTION=$1
+                                CLEAN_VENDOR=false
+                                ;;
+        * )                     SRC=$1
+                                ;;
+    esac
+    shift
+done
+
+if [ -z "$SRC" ]; then
+    SRC=adb
+fi
+
+# Initialize the helper
+setup_vendor "$DEVICE" "$VENDOR" "$CM_ROOT" false "$CLEAN_VENDOR"
+
+extract "$MY_DIR"/proprietary-files.txt "$SRC" "$SECTION"
+extract "$MY_DIR"/proprietary-files-twrp.txt "$SRC" "$SECTION"
+
+"$MY_DIR"/setup-makefiles.sh

@@ -9,7 +9,8 @@ persist.wlan.ti.calibrated = 0
 ro.sf.lcd_density = 320
 
 # use glcomposer as the default compositor
-persist.tegra.compositor=glcomposer
+persist.tegra.compositor=surfaceflinger
+
 
 # don't preload OpenGL in Zygote, the Tegra drivers do not like it
 ro.zygote.disable_gl_preload=true
@@ -37,6 +38,8 @@ ro.nv.usb.pid.rndis.adb = 4D04
 ro.nv.usb.pid.ptp = 4D05
 ro.nv.usb.pid.ptp.adb = 4D06
 
+persist.ril.forceairplanemode = 0
+
 # enable auto sensorhub update
 persist.sensorhubd.update = 1
 
@@ -49,4 +52,7 @@ klog.enabled = no
 
 qemu.hw.mainkeys=0
 
-persist.sys.ril.type=QMI
+# We are using old omx blobs
+media.stagefright.less-secure=true
+media.stagefright.legacyencoder=true
+

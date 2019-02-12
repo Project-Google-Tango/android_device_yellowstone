@@ -14,42 +14,16 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug mode=0755
 
 on init
-    mkdir /mnt/shell/emulated 0700 shell shell
-    mkdir /storage/emulated 0555 root root
-    mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
-    mkdir /storage/sdcard1 0700 root root
-
-    export EXTERNAL_STORAGE /storage/emulated/legacy
-    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
-    export EMULATED_STORAGE_TARGET /storage/emulated
-    export SECONDARY_STORAGE /storage/sdcard1
-
-    # Support legacy paths
-    symlink /storage/emulated/legacy /sdcard
-    symlink /storage/emulated/legacy /mnt/sdcard
-    symlink /storage/sdcard1 /mnt/sdcard2
-    symlink /storage/emulated/legacy /storage/sdcard0
-    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
-
-    # create directory for mounting usb drives
-    mkdir /mnt/media_rw/usbdrive 0700 media_rw media_rw
-    mkdir /storage/usbdrive 0700 root root
-    symlink /mnt/media_rw/usbdrive /storage/usbdrive
-    symlink /mnt/media_rw/usbdrive /usbdrive
-
-    # create directory for mounting calibration partition
-    mkdir /mnt/factory 0666 system system
-
-    # create directory for mounting user calibration partition
-    mkdir /mnt/usercalib 0771 system system
+    # Mount a tmpfs into /mnt/tmp for hosting nvram, phs shared memory
+    mkdir /mnt/tmp 0770 system system
+    mount tmpfs tmpfs /mnt/tmp mode=0775,gid=1003
 
     start watchdogd
 
+    #set GPS GPIO property, which is used in gps_select
+    setprop ro.gps.gpio 61
 on post-fs-data
     chmod 0644 /persist/wifi_mac.txt root root
-    symlink /system/vendor/firmware/bcm43341/fw_bcmdhd.bin /data/misc/wifi/firmware/fw_bcmdhd.bin
-    symlink /system/vendor/firmware/bcm43341/fw_bcmdhd_a0.bin /data/misc/wifi/firmware/fw_bcmdhd_a0.bin
-    symlink /system/etc/nvram_43341_rev4.txt /data/misc/wifi/firmware/nvram.txt
     insmod /system/lib/modules/bcmdhd.ko
     mkdir /data/misc/dhcp 0770 dhcp dhcp
     mkdir /data/nvcam 0700 media camera
@@ -82,15 +56,15 @@ on post-fs-data
     chown gps system /data/gps/
     chmod 0770 /data/gps/
 
-    chmod 0600 /dev/bcm2079x
-    chown nfc nfc /dev/bcm2079x
-    mkdir /data/nfc
-    mkdir /data/nfc/param
-    chmod 0700 /data/nfc
-    chmod 0700 /data/nfc/param
-    chown nfc nfc /data/nfc
-    chown nfc nfc /data/nfc/param
-    symlink /system/etc/libnfc-brcm.conf /data/nfc/libnfc-brcm.conf
+    start wifiloader
+
+# wifiloader - set the wifi commchip_id accordingly
+service wifiloader /system/bin/wifi_loader.sh
+    class main
+    user root
+    group root
+    oneshot
+    disabled
 
     # Create directory for tango_service
     mkdir /data/system 0775 system system
@@ -171,21 +145,6 @@ on boot
 
 # Touch
     chown system system /sys/class/input/input0/enabled
-
-    chown system system /sys/devices/tegradc.0/enable
-    chown system system /sys/devices/tegradc.1/enable
-    chown system system /sys/devices/platform/host1x/nvavp/boost_sclk
-    chown system system /sys/devices/virtual/misc/touch/report_mode
-    chown system system /sys/devices/virtual/misc/touch/selftest_spi_burst_read
-    chown system system /sys/devices/virtual/misc/touch/selftest_spi_burst_write
-    chown system system /sys/devices/virtual/misc/touch/selftest_spi_byte_read
-    chown system system /sys/devices/virtual/misc/touch/selftest_spi_byte_write
-    chown system system /sys/devices/virtual/misc/touch/touchfile_check
-    chown system system /sys/devices/virtual/misc/touch/selftest_enable
-    chown system system /sys/devices/virtual/misc/touch/get_platform_id_gpio
-    chown system system /sys/devices/virtual/misc/touch/self_test
-    chown system system /sys/class/input/input1/enabled
-    chown system system /sys/class/input/input2/enabled
 
 # Power management settings
     write /sys/devices/system/cpu/cpuquiet/tegra_cpuquiet/no_lp 0
@@ -285,9 +244,6 @@ on property:ro.debuggable=1
     # EMC debug interface
     chmod 666 /sys/kernel/debug/tegra_emc/eack_state
 
-service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
-    class late_start
-
 service fuse_sdcard1 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/sdcard1 /storage/sdcard1
     class late_start
     disabled
@@ -367,11 +323,14 @@ service pbc /system/bin/pbc
     group root
 
 #Raydium touch setting
-service rm_ts_service    /vendor/bin/rm_ts_server
-    class main
+service rm_ts_service    /system/bin/rm_ts_server
+    disabled
+    class late_start
     user system
     group system input
-    writepid /dev/cpuset/foreground/tasks
+
+on property:ro.boot.touch_vendor_id=0
+    start rm_ts_service
 
 # unified scaling setup
 service ussr_setup /system/bin/ussr_setup.sh
